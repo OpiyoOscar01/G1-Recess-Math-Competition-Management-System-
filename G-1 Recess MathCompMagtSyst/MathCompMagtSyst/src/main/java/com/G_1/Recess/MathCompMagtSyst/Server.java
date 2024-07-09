@@ -21,7 +21,8 @@ public class Server implements CommandLineRunner {
 private static final int PORT = 12345; // Port number for the server
 private final ParticipantHandler participantHandler;
 private final Login login;
-private final ConcurrentHashMap<Socket, Boolean> clientLoginStatus; // Thread-safe map to track login status of clients
+private final ConcurrentHashMap<Socket, Boolean> clientLoginStatus;
+// Thread-safe map to track login status of client in the system.
 private final ExecutorService threadPool; // Thread pool for handling client connections
 
 public Server(ParticipantHandler participantHandler, Login login) {
