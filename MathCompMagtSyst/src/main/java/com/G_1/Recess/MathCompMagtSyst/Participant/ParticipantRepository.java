@@ -7,6 +7,8 @@ import java.util.Optional;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
-// Query to find participant by email
 Optional<Participant> findByEmail(String email);
+
+Optional<Participant> findByUsername(String username);
+
 }

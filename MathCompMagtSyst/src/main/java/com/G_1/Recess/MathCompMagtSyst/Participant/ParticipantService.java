@@ -42,4 +42,8 @@ participantRepository.deleteById(id);
 public Optional<Participant> findParticipantByEmail(String email){
 return participantRepository.findByEmail(email);
 }
+
+public Optional<Participant> findParticpantByUserName(String username){
+return  participantRepository.findByUsername(username);
+}
 }

@@ -35,7 +35,7 @@ System.out.println("$-Group-1-Recess-Project-System$ Actively Running... " + ser
 }
 }
 } catch (IOException e) {
-e.printStackTrace();
+System.out.println("Notice:"+e.getMessage());
 }
 }
 

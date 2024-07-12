@@ -1,0 +1,155 @@
+package com.G_1.Recess.MathCompMagtSyst;
+
+import com.G_1.Recess.MathCompMagtSyst.AcceptedParticipant.AccParticipantHandler;
+import com.G_1.Recess.MathCompMagtSyst.Attempt.AttemptService;
+import com.G_1.Recess.MathCompMagtSyst.Challenge.ChallengeHandler;
+import com.G_1.Recess.MathCompMagtSyst.Commons.Login;
+import com.G_1.Recess.MathCompMagtSyst.Participant.ParticipantHandler;
+import com.G_1.Recess.MathCompMagtSyst.Question.QuestionHandler;
+import com.G_1.Recess.MathCompMagtSyst.RejectedParticipant.RejParticipantHandler;
+import com.G_1.Recess.MathCompMagtSyst.School.SchoolHandler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+@Component
+@RequiredArgsConstructor
+public class Server implements CommandLineRunner {
+
+    private static final int PORT = 12345; // Port number for the server
+    private final ParticipantHandler participantHandler;
+    private final Login login;
+    private final ConcurrentHashMap<Socket, Boolean> clientLoginStatus;
+    private final ExecutorService threadPool; // Thread pool for handling client connections
+    private final SchoolHandler schoolHandler;
+    private final AccParticipantHandler accParticipantHandler;
+    private final RejParticipantHandler rejParticipantHandler;
+    private final ChallengeHandler challengeHandler;
+    private final QuestionHandler questionHandler;
+    private final AttemptService attemptService;
+
+    public Server(ParticipantHandler participantHandler, Login login, SchoolHandler schoolHandler, AccParticipantHandler accParticipantHandler, RejParticipantHandler rejParticipantHandler, ChallengeHandler challengeHandler, QuestionHandler questionHandler, AttemptService attemptService) {
+        this.participantHandler = participantHandler;
+        this.login = login;
+        this.schoolHandler = schoolHandler;
+        this.accParticipantHandler = accParticipantHandler;
+        this.rejParticipantHandler = rejParticipantHandler;
+        this.challengeHandler = challengeHandler;
+        this.questionHandler = questionHandler;
+        this.attemptService = attemptService;
+        this.clientLoginStatus = new ConcurrentHashMap<>();
+        this.threadPool = Executors.newFixedThreadPool(10); // Create a thread pool with a fixed number of threads
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Server started. Listening on port " + PORT);
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept(); // Accept new client connection
+                System.out.println("New client connected: " + clientSocket);
+
+                clientLoginStatus.put(clientSocket, false); // Initialize client login status as false
+                threadPool.submit(() -> handleClient(clientSocket)); // Submit the client handling task to the thread pool
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleClient(Socket clientSocket) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+
+            // Send welcome message to the client
+            out.println("Welcome to the Recess system!");
+
+            // Handle client commands
+            String command;
+            while ((command = in.readLine()) != null) {
+                if (command.equals("exit")) {
+                    out.println("Goodbye!");
+                    break;
+                }
+
+                String response = handleCommand(command, clientSocket);
+                out.println(response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Remove the client from the login status map when they disconnect
+            clientLoginStatus.remove(clientSocket);
+            System.out.println("Client disconnected: " + clientSocket);
+        }
+    }
+
+    private String handleCommand(String command, Socket clientSocket) {
+        Boolean isLoggedIn = clientLoginStatus.get(clientSocket);
+
+        if (!isLoggedIn) {
+            // Allow only login command if the client is not logged in
+            if (command.startsWith("login")) {
+                return handleLogin(command, clientSocket);
+            } else {
+                return "You must login first.";
+            }
+        }
+
+        // Handle other commands based on the input
+        if (command.equals("displayAllAvailableChanges")) {
+            return challengeHandler.displayAllAvailableChanges();
+        } else if (command.startsWith("startChallenge")) {
+            String[] parts = command.split(" ");
+            Long challengeId = Long.parseLong(parts[1]);
+            Long participantId = Long.parseLong(parts[2]);
+            return challengeHandler.startChallenge(challengeId, participantId);
+        } else if (command.startsWith("attemptChallenge")) {
+            String[] parts = command.split(" ");
+            Long challengeId = Long.parseLong(parts[1]);
+            Long participantId = Long.parseLong(parts[2]);
+            return challengeHandler.attemptChallenge(challengeId, participantId);
+        } else if (command.startsWith("submitAnswer")) {
+            String[] parts = command.split(" ");
+            Long challengeId = Long.parseLong(parts[1]);
+            Long participantId = Long.parseLong(parts[2]);
+            Long questionId = Long.parseLong(parts[3]);
+            String answer = parts[4];
+            return challengeHandler.submitAnswer(challengeId, participantId, questionId, answer);
+        } else if (command.equals("logout")) {
+            clientLoginStatus.put(clientSocket, false);
+            return "Logged out successfully.";
+        } else {
+            return "Invalid command.";
+        }
+    }
+
+    private String handleLogin(String command, Socket clientSocket) {
+        // Handle login command and update login status
+        String[] parts = command.split(" ");
+        if (parts.length == 3) {
+            String username = parts[1];
+            String password = parts[2];
+            boolean loginSuccess = login.authenticate(username, password);
+            if (loginSuccess) {
+                clientLoginStatus.put(clientSocket, true);
+                return "Login successful.";
+            } else {
+                return "Invalid username or password.";
+            }
+        } else {
+            return "Invalid login command. Use: login <username> <password>";
+        }
+    }
+}

@@ -13,19 +13,9 @@ import java.util.List;
 public class School {
 
 @Id
-@GeneratedValue(strategy = GenerationType.SEQUENCE)
 private Long regNum;
 
 private String name;
 private String district;
-
-//@OneToOne(mappedBy = "school")
-//private SchRepresentative schRepresentative;
-//
-//// Uncommented and corrected the following lines:
-//@OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//private List<Participant> participants;
-
-// Getters and setters omitted for brevity
 }
 

@@ -13,6 +13,7 @@ public class AccParticipant extends ParticipantBaseEntity {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long accpart_id;
+@Column(name = "school_reg_num")
 private Long school_regNum;
 
 }
