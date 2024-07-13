@@ -19,4 +19,8 @@ return challengeRepository.findAll();
 public Optional<Challenge> findExistingChallengeByChallengeId(Long challlengeId){
 return challengeRepository.findByChallengeId(challlengeId);
 }
+
+public Challenge saveChallengeInfo(Challenge challenge){
+return challengeRepository.save(challenge);
+}
 }

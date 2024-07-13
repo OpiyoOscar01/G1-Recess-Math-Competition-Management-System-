@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,5 +16,8 @@ return accParticipantRepository.save(accParticipant);
 }
 public List<AccParticipant> findAllAcceptedParicipants(){
 return accParticipantRepository.findAll();
+}
+public Optional<AccParticipant> findAccptedParticipantById(Long acceptedParticipantId){
+return accParticipantRepository.findByAccpartId(acceptedParticipantId);
 }
 }

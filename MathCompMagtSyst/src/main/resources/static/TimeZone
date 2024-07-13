@@ -1,0 +1,93 @@
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class LocalDateTimeDifferenceInMinutes {
+
+    public static void main(String[] args) {
+        // Define the East African Time Zone
+        ZoneId eastAfricanTimeZone = ZoneId.of("Africa/Nairobi");
+
+        // Current LocalDateTime in the East African Time Zone
+        LocalDateTime now = LocalDateTime.now(eastAfricanTimeZone);
+
+        // Define a past LocalDateTime
+        LocalDateTime pastDateTime = LocalDateTime.of(2023, 1, 1, 10, 0); // Example: January 1, 2023, at 10:00 AM
+
+        // Define a future LocalDateTime
+        LocalDateTime futureDateTime = LocalDateTime.of(2024, 12, 31, 18, 0); // Example: December 31, 2024, at 6:00 PM
+
+        // Calculate difference in minutes between pastDateTime and now
+        long minutesAgo = calculateMinutesDifference(now, pastDateTime);
+
+        // Calculate difference in minutes between now and futureDateTime
+        long minutesAhead = calculateMinutesDifference(futureDateTime, now);
+
+        // Print results
+        System.out.println("Minutes ago: " + minutesAgo);
+        System.out.println("Minutes ahead: " + minutesAhead);
+    }
+
+    // Method to calculate difference in minutes between two LocalDateTime values
+    private static long calculateMinutesDifference(LocalDateTime dateTime1, LocalDateTime dateTime2) {
+        ZonedDateTime zonedDateTime1 = ZonedDateTime.of(dateTime1, ZoneId.of("Africa/Nairobi"));
+        ZonedDateTime zonedDateTime2 = ZonedDateTime.of(dateTime2, ZoneId.of("Africa/Nairobi"));
+
+        Duration duration = Duration.between(zonedDateTime1, zonedDateTime2);
+        return Math.abs(duration.toMinutes());
+    }
+}
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+public class LocalDateTimeDurationExample {
+
+    public static void main(String[] args) {
+        // Define the East African Time Zone
+        ZoneId eastAfricanTimeZone = ZoneId.of("Africa/Nairobi");
+
+        // Current LocalDateTime in the East African Time Zone
+        LocalDateTime now = LocalDateTime.now(eastAfricanTimeZone);
+
+        // Define a future LocalDateTime in the East African Time Zone
+        LocalDateTime futureDateTime = LocalDateTime.of(2025, 1, 1, 12, 0);
+
+        // Define a past LocalDateTime in the East African Time Zone
+        LocalDateTime pastDateTime = LocalDateTime.of(2023, 1, 1, 12, 0);
+
+        // Calculate duration in minutes from now to futureDateTime
+        long minutesToFuture = calculateDurationInMinutes(now, futureDateTime);
+
+        // Calculate duration in minutes from now to pastDateTime
+        long minutesToPast = calculateDurationInMinutes(now, pastDateTime);
+
+        // Calculate duration in days from now to futureDateTime
+        long daysToFuture = calculateDurationInDays(now, futureDateTime);
+
+        // Calculate duration in days from now to pastDateTime
+        long daysToPast = calculateDurationInDays(now, pastDateTime);
+
+        // Print results
+        System.out.println("Minutes to future date (" + futureDateTime + "): " + minutesToFuture);
+        System.out.println("Minutes to past date (" + pastDateTime + "): " + minutesToPast);
+        System.out.println("Days to future date (" + futureDateTime + "): " + daysToFuture);
+        System.out.println("Days to past date (" + pastDateTime + "): " + daysToPast);
+    }
+
+    // Method to calculate duration in minutes between two LocalDateTime values
+    private static long calculateDurationInMinutes(LocalDateTime dateTime1, LocalDateTime dateTime2) {
+        Duration duration = Duration.between(dateTime1, dateTime2);
+        return Math.abs(duration.toMinutes());
+    }
+
+    // Method to calculate duration in days between two LocalDateTime values
+    private static long calculateDurationInDays(LocalDateTime dateTime1, LocalDateTime dateTime2) {
+        Duration duration = Duration.between(dateTime1, dateTime2);
+        return Math.abs(duration.toDays());
+    }
+}
+

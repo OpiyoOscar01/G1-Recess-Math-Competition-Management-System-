@@ -7,8 +7,8 @@ import lombok.Data;
 @Entity
 @Table(name = "questions")
 @NamedQuery(
-        name = "Question.findByChallengeId",
-        query = "SELECT q FROM Question q WHERE q.challenge.id = :challengeId"
+        name = "Question.countByChallengeId",
+        query = "SELECT COUNT(q) FROM Question q WHERE q.challenge.challengeId = :challengeId"
 )
 @Data
 public class Question {
@@ -22,12 +22,19 @@ private Long qtnNo;
 private String questionText;
 
 @Column(name = "marks")
-private int marks;
+private Long marks;
 
 @Column(name = "correct_answer")
 private String correctAnswer;
 
-@ManyToOne
+@ManyToOne(fetch = FetchType.LAZY)
 @JoinColumn(name = "challenge_id", referencedColumnName = "challenge_id")
 private Challenge challenge;
+
+@Column(name = "accpart_id")
+private Long participantId;
+
+private String providedAnswer;
+
+// Constructors, getters, setters, etc.
 }

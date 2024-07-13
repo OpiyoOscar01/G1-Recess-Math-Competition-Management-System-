@@ -11,4 +11,6 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
 @Query("SELECT c FROM Challenge c WHERE c.challengeId = :challengeId")
 Optional<Challenge> findByChallengeId(Long challengeId);
+
+
 }

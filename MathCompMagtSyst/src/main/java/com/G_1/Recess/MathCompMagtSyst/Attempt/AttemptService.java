@@ -8,12 +8,10 @@ import java.util.List;
 @Service
 public class AttemptService {
 private final AttemptRepository attemptRepository;
-
 @Autowired
 public AttemptService(AttemptRepository attemptRepository) {
 this.attemptRepository = attemptRepository;
 }
-
 public void saveAttempt(Attempt attempt) {
 attemptRepository.save(attempt);
 }

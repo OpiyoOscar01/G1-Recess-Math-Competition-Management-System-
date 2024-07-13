@@ -12,7 +12,8 @@ import lombok.EqualsAndHashCode;
 public class AccParticipant extends ParticipantBaseEntity {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long accpart_id;
+@Column(name = "accpart_id")
+private Long accpartId;
 @Column(name = "school_reg_num")
 private Long school_regNum;
 

@@ -1,0 +1,25 @@
+package com.G_1.Recess.MathCompMagtSyst.Question;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class QuestionHandler {
+
+    private final QuestionService questionService;
+
+    public String displayAllQuestionsUnderAGivenChallenge(String[] tokens) {
+        Long challengeId = Long.parseLong(tokens[1]);
+        Question randomQuestion = questionService.getRandomQuestion(challengeId);
+        return String.format("Question: %s (%d marks).", randomQuestion.getQuestionText(), randomQuestion.getMarks());
+    }
+
+    public void submitAnswer(String[] tokens) {
+        Long challengeId = Long.parseLong(tokens[1]);
+        Long participantId = Long.parseLong(tokens[2]);
+        Long questionNumber = Long.parseLong(tokens[3]);
+        String answer = tokens[4];
+        questionService.processAnswer(challengeId, participantId, questionNumber, answer);
+    }
+}
