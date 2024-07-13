@@ -164,14 +164,14 @@ return "ERROR: You must login first using the 'login--' command.";
 
 case "startChallenge":
 if (isLoggedIn) {
-return challengeHandler.startChallenge(tokens);
+return challengeHandler.startChallengef(tokens);
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }
 
 case "attemptChallenge":
 if (isLoggedIn) {
-return challengeHandler.attemptChallenge(tokens);
+return challengeHandler.attemptChallengef(tokens);
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }

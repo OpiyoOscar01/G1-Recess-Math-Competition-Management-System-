@@ -6,10 +6,26 @@ import lombok.Data;
 @Entity
 @Table(name = "results")
 @Data
+@NamedQuery(
+        name = "Result.countByChallengeIdAndParticipantId",
+        query = "SELECT COUNT(r) FROM Result r WHERE r.challengeId = :challengeId AND r.accpartId = :participantId"
+)
+
 public class Result {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long result_id;
-private Long accpart_id;
+
+@Column(name = "accpart_id")
+private Long accpartId;
+
+@Column(name = "attempt_id")
 private Long attempt_id;
+
+@Column(name = "challenge_id")
+private Long challengeId;
+
+private Long score;
+
 }
+

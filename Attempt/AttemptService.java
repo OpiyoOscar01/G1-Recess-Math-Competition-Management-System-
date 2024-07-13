@@ -12,7 +12,6 @@ private final AttemptRepository attemptRepository;
 public AttemptService(AttemptRepository attemptRepository) {
 this.attemptRepository = attemptRepository;
 }
-/*Features added:1.Reject/Accept participants 2.View Challenges 3.startChallenge 4.attemptChallenge 5.submit answers and get results.*/
 public void saveAttempt(Attempt attempt) {
 attemptRepository.save(attempt);
 }
