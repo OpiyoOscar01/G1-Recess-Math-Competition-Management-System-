@@ -1,0 +1,119 @@
+@Service
+@RequiredArgsConstructor
+public class ChallengeHandler {
+
+    private final ChallengeService challengeService;
+    private final QuestionService questionService;
+    private final ParticipantStateService participantStateService;
+
+    public String attemptChallenge(String[] tokens) {
+        Long challengeId = Long.parseLong(tokens[1]);
+        Long participantId = Long.parseLong(tokens[2]);
+
+        Optional<Challenge> optionalChallenge = challengeService.findExistingChallengeByChallengeId(challengeId);
+
+        if (optionalChallenge.isEmpty()) {
+            return "Challenge with ID " + challengeId + " does not exist";
+        }
+
+        // Load or initialize participant state for the challenge
+        ParticipantState participantState = participantStateService.getOrCreateParticipantState(participantId, challengeId);
+
+        if (participantState.getCurrentQuestionNumber() == null) {
+            // First time attempt, start with a random question
+            participantState.setCurrentQuestionNumber(randomQuestionGenerator.generateRandomQuestion(questionService.countTheNumberOFQuestionsUnderAGivenChallege(challengeId)));
+        }
+
+        Long questionNumber = participantState.getCurrentQuestionNumber();
+        Optional<Question> optionalQuestion = questionService.findExistingQuestionByNumber(questionNumber);
+
+        if (optionalQuestion.isEmpty()) {
+            return "No Question found for this challenge.";
+        }
+
+        Question question = optionalQuestion.get();
+        String response = String.format("Time Left: %d, Time Taken: %d.\nQtnNumber %d: %s (%d marks)",
+                optionalChallenge.get().getDurationInMinutes(),
+                computeTimeInterval.calculateDurationInMinutes(optionalChallenge.get().getParticipantStartDate(), LocalDateTime.now()),
+                question.getQtnNo(),
+                question.getQuestionText(),
+                question.getMarks());
+
+        // Update participant state to move to the next question
+        participantState.moveToNextQuestion();
+
+        // Save updated participant state
+        participantStateService.updateParticipantState(participantState);
+
+        return response;
+    }
+
+
+
+
+public String submitAnswer(String[] tokens) {
+Long challengeId = Long.parseLong(tokens[1]);
+Long participantId = Long.parseLong(tokens[2]);
+Long questionNumber = Long.parseLong(tokens[3]);
+String answer = tokens[4];
+
+
+Optional<Question> questionOptional = questionService.findExistingQuestionByNumber(questionNumber);
+if (questionOptional.isEmpty()) {
+return "Question not found.";
+}
+
+
+Optional<AccParticipant> optionalAccParticipant=accParticipantService.findAccptedParticipantById(participantId);
+
+if(optionalAccParticipant.isEmpty()){
+return "You are not among the qualified participants for this competition.Contact your school for more info.";
+}
+
+Optional<Challenge> challengeOptional=challengeService.findExistingChallengeByChallengeId(challengeId);
+Challenge challenge = challengeOptional.get();
+
+
+if(LocalDateTime.now().isBefore(challenge.getOpeningDate())){
+return "It's too early for you to open the challenge.This challenge will open on "+challenge.getOpeningDate()+" which is "+computeTimeInterval.calculateDurationInDays(now,challenge.getOpeningDate())+" days from now.";
+} else if (LocalDateTime.now().isAfter(challenge.getClosingDate())) {
+return "You are too late for the challenge.It got closed on "+challenge.getClosingDate()+" which is "+ computeTimeInterval.calculateDurationInDays(now,challenge.getClosingDate())+" days ago.";
+}
+Question question = questionOptional.get();
+Result participantResult=new Result();
+if (answer.equalsIgnoreCase(question.getCorrectAnswer())) {
+participantResult.setScore(question.getMarks());
+} else if (answer.equals("-")) {
+participantResult.setScore(question.getMarks()-3);
+} else {
+participantResult.setScore(question.getMarks() - 6);
+}
+participantResult.setAccpartId(participantId);
+participantResult.setChallengeId(challengeId);
+Long numberOfResults=(resultService.countResultsByChallengeIdAndParticipantId(challengeId,participantId));
+int intResult=numberOfResults.intValue();
+//Save participant result per question
+resultService.saveParticpantResult(participantResult);
+
+int finalScore=resultService.sumScoresByChallengeIdAndParticipantId(challengeId,participantId).intValue();
+int limit = 30;
+int counter = 0;
+
+for (int i = 1; i <= limit; i++) {
+if (i % 10 == 0) {
+
+challenge.setNumberOfAttempts(counter++);
+}
+}
+
+if (challenge.getNumberOfAttempts() >= 3) {
+challenge.setParticipantEndDate(now);
+resultService.saveParticpantResult(participantResult);
+return format("Challenge ended. Your score: %d",finalScore);
+}
+
+return format("Current score: %d.",finalScore);
+}
+
+
+}

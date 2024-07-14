@@ -26,6 +26,8 @@ private Long attempt_id;
 private Long challengeId;
 
 private Long score;
+@Column(name = "question_number")
+private Long questionNumber;
 
 }
 

@@ -152,8 +152,8 @@ return "No participants found";
 StringBuilder response = new StringBuilder();
 response.append("List of participants:\n");
 for (Participant participant : participants) {
-response.append(format("ID: %d, FirstName: %s, LastName: %s, Username: %s,SchoolId: %s, Email: %s%n",
-        participant.getPart_id(), participant.getFirstName(), participant.getLastName(), participant.getUsername(), participant.getSchool_regNum(), participant.getEmail()));
+response.append(format("FirstName: %s, LastName: %s, Username: %s,SchoolId: %s, Email: %s%n",
+        participant.getFirstName(), participant.getLastName(), participant.getUsername(), participant.getSchool_regNum(), participant.getEmail()));
 }
 return response.toString();
 }

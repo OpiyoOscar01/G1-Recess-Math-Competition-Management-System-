@@ -99,24 +99,24 @@ String[] tokens = command.split("\\s+");
 String commandType = tokens[0];
 
 Boolean isLoggedIn = clientLoginStatus.get(clientSocket); // Check if the client is logged in
-if (isLoggedIn == null || (!isLoggedIn && !commandType.equalsIgnoreCase("login--") && !commandType.equalsIgnoreCase("register"))) {
+if (isLoggedIn == null || (!isLoggedIn && !commandType.equalsIgnoreCase("Login--") && !commandType.equalsIgnoreCase("Register"))) {
 return "ERROR: You must login first using the 'login--' command.";
 }
 
 switch (commandType) {
-case "register":
+case "Register":
 return participantHandler.registerParticipant(tokens);
 case "update":
 return participantHandler.updateParticipant(tokens);
 
 // Handle login
-case "login--":
+case "Login--":
 String loginResponse = login.login(tokens);
 if (loginResponse.contains("Hi")) {
 clientLoginStatus.put(clientSocket, true); // Update login status
 }
 return loginResponse;
-case "delete":
+case "Delete":
 if (isLoggedIn) {
 return participantHandler.deleteParticipant(tokens);
 } else {
@@ -130,13 +130,13 @@ return "ERROR: You must login first using the 'login--' command.";
 }
 case "viewApplicants":
 if (isLoggedIn) {
-return participantHandler.getAllParticipants(); // Handle fetching all participants
+return participantHandler.getAllParticipants();
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }
 case "viewApplicants:Accepted":
 if (isLoggedIn) {
-return accParticipantHandler.getAllAcceptedParticipants(); // Handle fetching all participants
+return accParticipantHandler.getAllAcceptedParticipants();
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }
@@ -155,7 +155,7 @@ return challengeHandler.displayAllAvailableChallenges();
 return "ERROR: You must login first using the 'login--' command.";
 }
 
-case "attemptChallenge*":
+case "showQuestions:":
 if (isLoggedIn) {
 return questionHandler.displayAllQuestionsUnderAGivenChallenge(tokens);
 } else {
@@ -164,21 +164,21 @@ return "ERROR: You must login first using the 'login--' command.";
 
 case "startChallenge":
 if (isLoggedIn) {
-return challengeHandler.startChallengef(tokens);
+return challengeHandler.startChallenge(tokens);
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }
 
 case "attemptChallenge":
 if (isLoggedIn) {
-return challengeHandler.attemptChallengef(tokens);
+return challengeHandler.attemptChallenge1(tokens);
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }
 
 case "submitAnswer":
 if (isLoggedIn) {
-return challengeHandler.submitAnswer(tokens);
+return challengeHandler.submitAnswer1(tokens);
 } else {
 return "ERROR: You must login first using the 'login--' command.";
 }
@@ -191,7 +191,7 @@ return "ERROR: You must login first using the 'login--' command.";
 }
 
 default:
-return "ERROR: Unknown command";
+return "Incorrect command! Check here for list of available commands,their parameters and their use.\n(a)General commands.\n.Login-- email password =To login to your account.\n2.exit ==To quit the system.\n1.(a)Participant Commands.\n1.Register firstname lastename username  password email schoolRegistrationNumber ==To register yourself as a participant.\n2.viewChallenges ==To shaow all the available challeges you can attempt.\n3.showQuestions: challengeId ==To show all the available questions under a given challenge.\n4.startChallenge challengeId ParticipantId ==To start the challenge timer.\n5.attemptChallenge challenegId partcicpantId ==To attempt seleceted challenege.\n6.submitAnswer challengeId participantId questionNumber answer ==To submit answer for a selected question from a given challenge.\n(b)School Representative commands.\n1.viewApplicants ==To view all enrolled applicants.\n2.viewApplicants:Rejected ==To view all rejected applicants.\n3.viewApplicants:Accepted ==To view all accepted applicants.\n4.confirm yes/no applicantUserName.\n";
 }
 }
 }
