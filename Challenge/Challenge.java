@@ -44,7 +44,7 @@ private Long durationInDays;
 private Long accpartId;
 
 @Column(name = "number_of_attempts")
-private int numberOfAttempts;
+private Integer numberOfAttempts;
 
 @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY)
 private List<Question> questions;

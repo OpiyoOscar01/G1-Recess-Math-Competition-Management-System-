@@ -18,7 +18,7 @@ try (
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in))
 ) {
-System.out.println("\n\n Hi, you are connected to The Mathematics Competition Management System.\n Type in your Commands below:\n");
+System.out.println("Hi, Welcome To The Mathematics Competition Management System.\n Check here for available commands,their parameters and their use.\n(a)General commands.\n1.Login-- email password =To login to your account.\n2.exit ==To quit the system.\n1.(a)Participant Commands.\n1.Register firstname lastename username password email schoolRegistrationNumber ==To register yourself as a participant.\n2.viewChallenges ==To shaow all the available challeges you can attempt.\n3.showQuestions challengeId ==To show all the available questions under a given challenge.\n4.startChallenge challengeId ParticipantId ==To start the challenge timer.\n5.attemptChallenge challenegId partcicpantId ==To attempt seleceted challenege.\n6.submitAnswer challengeId participantId questionNumber answer ==To submit answer for a selected question from a given challenge.\n(b)School Representative commands.\n1.viewApplicants ==To view all enrolled applicants.\n2.viewApplicants:Rejected ==To view all rejected applicants.\n3.viewApplicants:Accepted ==To view all accepted applicants.\n4.confirm yes/no applicantUserName.");
 
 String userInputLine;
 while ((userInputLine = userInput.readLine()) != null) {
