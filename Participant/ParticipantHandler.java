@@ -1,22 +1,19 @@
 package com.G_1.Recess.MathCompMagtSyst.Participant;
 
-import com.G_1.Recess.MathCompMagtSyst.AcceptedParticipant.AccParticipant;
 import com.G_1.Recess.MathCompMagtSyst.AcceptedParticipant.AccParticipantService;
 import com.G_1.Recess.MathCompMagtSyst.Commons.EmailService;
-import com.G_1.Recess.MathCompMagtSyst.RejectedParticipant.RejParticipant;
+import com.G_1.Recess.MathCompMagtSyst.Commons.PasswordHashing;
 import com.G_1.Recess.MathCompMagtSyst.RejectedParticipant.RejParticipantService;
 import com.G_1.Recess.MathCompMagtSyst.School.School;
 import com.G_1.Recess.MathCompMagtSyst.School.SchoolService;
+import com.G_1.Recess.MathCompMagtSyst.EmailNotifiactions.Registration.RegistrationCompleteEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import com.G_1.Recess.MathCompMagtSyst.Commons.PasswordHashing;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -30,6 +27,7 @@ private final PasswordHashing passwordHashing;
 private final SchoolService schoolService;
 private final AccParticipantService accParticipantService;
 private final RejParticipantService rejParticipantService;
+private final ApplicationEventPublisher applicationEventPublisher;
 
 @Transactional
 public String registerParticipant(String[] tokens) {
@@ -47,9 +45,8 @@ Long schoolRegNum = Long.parseLong(schoolRegNumStr);
 Optional<Participant> existingUser = participantService.findParticipantByEmail(email);
 Optional<School> existingSchool = schoolService.findSchoolByRegNum(schoolRegNum);
 
-
 if (existingSchool.isEmpty()) {
-return "Hello,the school with the provided Registration number does not exist.";
+return "Hello, the school with the provided Registration number does not exist.";
 }
 
 if (existingUser.isPresent()) {
@@ -64,38 +61,13 @@ newParticipant.setPassword(password);
 newParticipant.setSchool_regNum(schoolRegNum);
 participantService.saveParticipant(newParticipant);
 
-// Schedule email sending after the transaction commit
-TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-@Override
-public void afterCommit() {
-//sendWelcomeEmail(newParticipant);
-}
-
-@Override
-public void beforeCommit(boolean readOnly) {
-}
-
-@Override
-public void beforeCompletion() {
-}
-
-@Override
-public void afterCompletion(int status) {
-}
-});
-
-return "Registration successful";
+//Publish a registration event after saving the particicpant data to the database.
+applicationEventPublisher.publishEvent(new RegistrationCompleteEvent(newParticipant));
+return String.format("You have been successfully Registered.\nA Notification message has been sent to your email (%s)",newParticipant.getEmail());
 }
 } catch (Exception e) {
 return "ERROR: " + e.getMessage();
 }
-}
-
-private void sendWelcomeEmail(Participant participant) {
-String subject = "Welcome to this year's Math Competition";
-String text = String.format("Dear %s,\nThank you for registering.\nMath Competition Management System.",
-        participant.getFirstName());
-emailService.sendRegistrationEmail(participant.getEmail(), subject, text);
 }
 
 public String updateParticipant(String[] tokens) {
@@ -152,7 +124,7 @@ return "No participants found";
 StringBuilder response = new StringBuilder();
 response.append("List of participants:\n");
 for (Participant participant : participants) {
-response.append(format("FirstName: %s, LastName: %s, Username: %s,SchoolId: %s, Email: %s%n",
+response.append(format("FirstName: %s, LastName: %s, Username: %s, SchoolId: %s, Email: %s%n",
         participant.getFirstName(), participant.getLastName(), participant.getUsername(), participant.getSchool_regNum(), participant.getEmail()));
 }
 return response.toString();

@@ -1,5 +1,6 @@
 package com.G_1.Recess.MathCompMagtSyst.AcceptedParticipant;
 
+import com.G_1.Recess.MathCompMagtSyst.Participant.Participant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,10 @@ return accParticipantRepository.findAll();
 }
 public Optional<AccParticipant> findAccptedParticipantById(Long acceptedParticipantId){
 return accParticipantRepository.findByAccpartId(acceptedParticipantId);
+}
+
+
+public Optional<AccParticipant> findAcceptedParticipantByEmail(String email){
+return accParticipantRepository.findByEmail(email);
 }
 }
