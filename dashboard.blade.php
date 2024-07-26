@@ -33,35 +33,7 @@
 
     <!--Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
-    <style>
-        img{
-            border-radius: 40px;
-            height: 80px;
-            width: 80px;
-            cursor: pointer;
-            border: 3px solid orange;
-        }
 
-        .menu{
-            background-color: ghostwhite;
-            border: 3px solid black;
-            display: none;
-            margin-right: 20px;
-            border-radius: 20px;
-        }
-        .image:hover .menu{
-            display: block;
-        }
-        .admin{
-            margin-bottom: 10px;
-        }
-        .admin:hover,.logout:hover{
-            background-color: orange;
-            color: black;
-            font-weight: bolder;
-
-        }
-    </style>
 
 </head>
 
@@ -82,7 +54,7 @@
                         <div class="col-lg-7 px-5 text-start">
                             <div class="h-100 d-inline-flex align-items-center py-2 me-4">
                                 <i class="fa fa-envelope text-primary me-2"></i>
-                                <p class="mb-0">mathcompmagtsyst@gmail.com</p>
+                                <p class="mb-0">math@example.com</p>
                             </div>
                             <div class="h-100 d-inline-flex align-items-center py-2">
                                 <i class="fa fa-phone-alt text-primary me-2"></i>
@@ -111,33 +83,18 @@
                         </button>
                         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                             <div class="navbar-nav mr-auto py-0">
-                                <a href={{route('home')}} class="nav-item
-                                   nav-link">Home</a>
+                                <a href="/welcome" class="nav-item nav-link">Home</a>
+                                <a href="/welcome" class="nav-item nav-link">About</a>
+                                <!-- <a href="registration.blade.php" class="nav-item nav-link">Webmail</a> -->
+                                <a href="/contact us" class="nav-item nav-link active">Contact Us</a>
 
                             </div>
                             <!-- <a href="/contact us" class="nav-item nav-link active">Contact Us</a> -->
                         </div>
-                        <div class="image">
-                            <img src="https://picsum.photos/200" alt="">
-                            <div class="menu">
-                                <!-- Dashboard link -->
-                                <div class="admin">
-                                    <a style="color:black;font-size:  20px;
-                            color:black;cursor: pointer;"
-                                       href="{{ route('admin-dashboard') }}"
-                                       class="dashboard">Admin Dashboard</a>
-                                </div>
-                                <!-- Logout form -->
-                                <div class="logout">
-                                    <form action="{{ route('logout') }}" method="post">
-                                        @csrf
-                                        <button style="color:black;cursor:pointer;"
-                                                class="logout-btn">Logout
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="/dashboard"
+                            class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block bg-orange-400">
+                            Dashboard
+                        </a>
                 </div>
                 </nav>
             </div>
@@ -185,8 +142,8 @@
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="\dashboard" data-bs-toggle="collapse"
-                        href={{route('dashboard')}}>
-                        <i class="bi bi-bar-chart"></i><span>Rankings</span><i class="bi  ms-auto"></i>
+                        href="\dashboard">
+                        <i class="bi bi-bar-chart"></i><span>Rankings</span><i class="bi ms-auto"></i>
                     </a>
 
                 </li><!-- End Charts Nav -->
@@ -195,9 +152,9 @@
 
                 <li class="nav-heading">Pages</li>
                 <li class="nav-item">
-                    <a class="nav-link " href={{route('admin-dashboard')}}>
+                    <a class="nav-link " href="\welcome">
                         <i class="bi bi-file-earmark"></i>
-                        <span>Admin Dashboard</span>
+                        <span>Home</span>
                     </a>
                 </li><!-- End Blank Page Nav -->
 
@@ -209,6 +166,19 @@
                         <span>F.A.Q</span>
                     </a>
                 </li><!-- End F.A.Q Page Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="\contact us">
+                        <i class="bi bi-envelope"></i>
+                        <span>Contact</span>
+                    </a>
+                </li><!-- End Contact Page Nav -->
+
+
+
+
+
+
             </ul>
 
         </aside><!-- End Sidebar-->
@@ -401,13 +371,12 @@
         </main><!-- End #main -->
 
         <!-- ======= Footer ======= -->
-{{--        <footer id="footer" class="footer">--}}
-{{--            <div class="copyright">--}}
-{{--                &copy; Copyright <strong><span>23magic Software Engineers</span></strong>. All Rights Reserved--}}
-{{--            </div>--}}
+        <footer id="footer" class="footer">
+            <div class="copyright">
+                &copy; Copyright <strong><span>23magic Software Engineers</span></strong>. All Rights Reserved
+            </div>
 
-{{--        </footer>End Footer--}}
-        <x-footer></x-footer>
+        </footer>End Footer
 
         <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
                 class="bi bi-arrow-up-short"></i></a>
